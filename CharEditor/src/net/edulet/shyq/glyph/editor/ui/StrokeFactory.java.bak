@@ -1,0 +1,29 @@
+package shyq.glyph.editor.ui;
+
+import java.util.Vector;
+
+import shyq.glyph.CharComponent;
+
+public class StrokeFactory {
+
+	public static Vector getStrokeByToolCode(int code) {
+	    Vector stroke = new Vector();
+	    
+		switch(code){
+		    case ToolCode.ToolStrokeHeng:
+    		    stroke.add(new Point(10,60));
+    		    stroke.add(new Point(28,64));
+    		    stroke.add(new Point(104,52));
+    		    stroke.add(new Point(119,58));
+    		    break;
+		    case ToolCode.ToolStrokeShu:
+		        stroke.add(new Point(52,13));
+		        stroke.add(new Point(58,23));
+		        stroke.add(new Point(58,100));
+		        stroke.add(new Point(59,108));
+		        break;
+		}
+		return stroke;
+	}
+
+}

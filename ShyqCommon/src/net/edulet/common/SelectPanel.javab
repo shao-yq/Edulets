@@ -1,0 +1,713 @@
+/*
+ * SelectPanel.java
+ *
+ * Created on 2000年3月15日, 上午11:35
+ */
+package com.shyq.common;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.event.* ;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Vector;
+import java.awt.Insets;
+import java.awt.Graphics;
+
+import java.awt.dnd.*;
+import java.awt.datatransfer.*;
+
+import javax.accessibility.*;
+import javax.swing.AbstractButton;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel; 
+import javax.swing.KeyStroke;
+import javax.swing.ListModel;
+
+
+/** 
+ *  SelectPanel is a pair list select panel. People can move items bettwen two lists.
+ *  It's a convienant way to manipulate multiple choices in given items.
+ *  @author  York (Yong Qing) Shao
+ *  @version 
+ *  Set list data, users should use DefaultListModel since the items movement between two lists
+ *  is based on DefaultListModel.
+ *  Usage example:
+ *  <pre>
+ *      SelectPanel SelectPanel = new SelectPanel();
+ *      DefaultListModel model = new DefaultListModel();
+ *      // Add data to model.
+ *      model.add(...)
+ *      JList list = SelectPanel.getLeftList();
+ *      list.setModel(model);
+ *      ...
+ *  </pre>
+ */
+public class SelectPanel extends JPanel
+                         implements ActionListener {
+
+    // Variables declaration - do not modify
+    private javax.swing.JLabel availableLabel;
+    //private javax.swing.JList leftList;
+    private DragAndDropList leftList;
+    private javax.swing.JLabel selectedLabel;
+    //private javax.swing.JList rightList;
+    private DragAndDropList rightList;
+    private javax.swing.JButton leftToRightButton;
+    private javax.swing.JButton rightToLeftButton;
+    private javax.swing.JButton leftToRightAllButton;
+    private javax.swing.JButton rightToLeftAllButton;
+    javax.swing.JScrollPane  scrollPane1;
+    javax.swing.JScrollPane  scrollPane2;
+    
+    javax.swing.JPanel  leftPanel;
+    javax.swing.JPanel  centerPanel;
+    javax.swing.JPanel  buttonPanel;
+    javax.swing.JPanel  rightPanel;
+    
+    
+    // End of variables declaration
+
+    /** Creates new form SelectDictionary */
+    public SelectPanel() {
+        super ();
+        initComponents ();
+        setBorder (new CompoundBorder(new javax.swing.border.EtchedBorder(),
+                                      new EmptyBorder(10,10,10,5)));
+    }
+
+    private void initComponents () {
+        availableLabel = LocalyzerGUI.createLabel("SelectPanel.availableLabel");
+        selectedLabel = LocalyzerGUI.createLabel("SelectPanel.selectedLabel");
+        leftToRightButton = new javax.swing.JButton ();
+        rightToLeftButton = new javax.swing.JButton ();
+        leftToRightAllButton = new javax.swing.JButton ();
+        rightToLeftAllButton = new javax.swing.JButton ();
+
+        // Build left panel.
+        leftPanel = new javax.swing.JPanel();
+        leftPanel.setLayout(new BorderLayout());
+        leftPanel.add (availableLabel,BorderLayout.NORTH);
+        // Construct Left list, and DefaultListModel
+        DefaultListModel  listModel = new DefaultListModel();
+        //leftList = new javax.swing.JList (listModel);
+        leftList = new DragAndDropList ();
+        leftList.setModel(listModel);
+        // Since JList connot scroll itself. We put it in a JScrollPane.
+        scrollPane1 = new javax.swing.JScrollPane();
+        scrollPane1.getViewport().setView(leftList);
+        leftPanel.add (scrollPane1,BorderLayout.CENTER);
+        
+        // Build right panel.
+        rightPanel = new javax.swing.JPanel();
+        rightPanel.setLayout(new BorderLayout());
+        rightPanel.add (selectedLabel,BorderLayout.NORTH);
+        // Construct right list, and DefaultListModel
+        listModel = new DefaultListModel();
+        //rightList = new javax.swing.JList (listModel);
+        rightList = new DragAndDropList ();
+        rightList.setModel(listModel);
+        scrollPane2 = new javax.swing.JScrollPane();
+        rightPanel.add (scrollPane2,BorderLayout.CENTER);
+        scrollPane2.getViewport().setView(rightList);
+        
+        // Build center panel to hold buttons.
+        // Some buttons to manipulate list's items in easy way.        
+        centerPanel = new javax.swing.JPanel();
+        centerPanel.setLayout(new BorderLayout());
+
+        buttonPanel = new javax.swing.JPanel();
+        buttonPanel.setLayout(new FlowLayout());
+        centerPanel.add(buttonPanel,BorderLayout.CENTER);
+        
+        javax.swing.JLabel label = new javax.swing.JLabel();
+        label.setPreferredSize(new Dimension(60, 30));     
+        label.setText("");
+        buttonPanel.add (label);
+        
+        leftToRightButton.setText (">>");
+        buttonPanel.add (leftToRightButton);
+        leftToRightButton.setPreferredSize(new Dimension(70, 30));     
+        rightToLeftButton.setText ("<<");
+        buttonPanel.add (rightToLeftButton);
+        rightToLeftButton.setPreferredSize(new Dimension(70, 30));
+        
+        leftToRightAllButton.setText (">> |");
+        buttonPanel.add (leftToRightAllButton);
+        leftToRightAllButton.setPreferredSize(new Dimension(70, 30));
+        
+        rightToLeftAllButton.setText ("| <<");
+        buttonPanel.add (rightToLeftAllButton);
+        rightToLeftAllButton.setPreferredSize(new Dimension(70, 30));
+        
+        //         
+        leftToRightButton.addActionListener(this);
+        leftToRightAllButton.addActionListener(this);
+        rightToLeftButton.addActionListener(this);
+        rightToLeftAllButton.addActionListener(this);
+
+        // Settle all panels
+        setLayout(new MorphBorderLayout());
+        add(centerPanel,BorderLayout.CENTER);
+        add(leftPanel,BorderLayout.WEST);
+        add(rightPanel,BorderLayout.EAST);
+        
+        centerPanel.setPreferredSize(new Dimension(78,260));
+        centerPanel.setMaximumSize(new Dimension(80,260));
+        centerPanel.setMinimumSize(new Dimension(50,260));
+
+        MouseListener mouseListener = new MouseAdapter() {
+         public void mouseClicked(MouseEvent e) {
+             if (e.getClickCount() == 2) {
+                Object source = e.getSource();
+                Object selected;
+                DefaultListModel listModel1, listModel2;
+                listModel1 = (DefaultListModel)leftList.getModel();
+                listModel2 = (DefaultListModel)rightList.getModel();
+                if(source == leftList){     // >>
+                     int index = leftList.locationToIndex(e.getPoint());
+                     if(index>=0){
+                        selected =leftList.getSelectedValue();
+                        listModel2.addElement(selected);
+                        listModel1.removeElement(selected);
+                     }
+                 }
+                 else if(source == rightList){  // <<
+                     int index = rightList.locationToIndex(e.getPoint());
+                     if(index>=0){
+                        selected =rightList.getSelectedValue();
+                        listModel1.addElement(selected);
+                        listModel2.removeElement(selected);
+                     }
+                }
+              }
+         }
+        };
+
+        leftList.addMouseListener(mouseListener);    
+        rightList.addMouseListener(mouseListener);    
+    }
+    
+
+    
+    /**
+     *  Move items between two lists
+     */
+    public void actionPerformed(ActionEvent e){
+        Object source = e.getSource();
+        Object[] selected;
+        DefaultListModel listModel1, listModel2;
+        listModel1 = (DefaultListModel)leftList.getModel();
+        listModel2 = (DefaultListModel)rightList.getModel();
+        if(source == leftToRightButton){            // ">>"
+            selected = leftList.getSelectedValues();
+            if(selected != null){
+                for(int i=0; i<selected.length; i++){
+                    listModel2.addElement(selected[i]);
+                    listModel1.removeElement(selected[i]);
+                }
+                
+            }
+        }
+        else if(source==leftToRightAllButton){      // ">>|"
+                while(!listModel1.isEmpty()){
+                    listModel2.addElement(listModel1.remove(0));
+                }
+        }else if(source==rightToLeftButton){        // "<<"
+                    selected = rightList.getSelectedValues();
+                    if(selected != null){
+                        for(int i=0; i<selected.length; i++){
+                            listModel1.addElement(selected[i]);
+                            listModel2.removeElement(selected[i]);
+                        }
+                    }
+                }else if(source==rightToLeftAllButton){     // "|<<"
+                            while(!listModel2.isEmpty()){
+                                listModel1.addElement(listModel2.remove(0));
+                            }
+                        }
+    }
+    
+    
+    /**
+     *  Set label text corresponding to left list
+     */
+    public void setLeftLabel(String str){
+        LocalyzerGUI.setComponentText(availableLabel,str);
+        //availableLabel.setText(str);
+    }
+    
+    /**
+     *  Set label text corresponding to right list
+     */
+    public void setRightLabel(String str){
+        LocalyzerGUI.setComponentText(selectedLabel,str);
+        //selectedLabel.setText(str);
+    }
+    
+    /**
+     *  Supply a way to fetch out left list so that people can manipulate the list directly.
+     */
+    public javax.swing.JList getLeftList(){
+        return leftList;
+    }
+    
+    /**
+     *  Supply a way to fetch out right list so that people can manipulate the list directly.
+     */
+    public javax.swing.JList getRightList(){
+        return rightList;
+    }
+
+    /**
+     *  Get pane left list is placed.
+     *  Since list can not scroll itsself, we use JScrollPane to hold the list.
+     *
+     */
+    public JComponent getLeftPane(){
+        return scrollPane1;
+    }
+    
+    /**
+     *  Get pane right list is placed.
+     *  Since list can not scroll itsself, we use JScrollPane to hold the list.
+     *
+     */
+    public JComponent getRightPane(){
+        return scrollPane2;
+    }
+
+    /** 
+     *  Set Left List contents.
+     */
+    public void setLeftListContent(Vector items){
+        if(items != null){
+            DefaultListModel listModel = new DefaultListModel();
+            for(int i=0; i<items.size(); i++){
+                listModel.addElement(items.elementAt(i));
+            }
+            
+            leftList.setModel(listModel);
+        }
+    }
+    public void setLeftListContent(Object[] items){
+        if(items != null){
+            DefaultListModel listModel = new DefaultListModel();
+            for(int i=0; i<items.length; i++){
+                listModel.addElement(items[i]);
+            }
+            
+            leftList.setModel(listModel);
+        }
+    }
+    public Vector getLeftListContent(){
+        ListModel listModel = leftList.getModel();
+        int n = listModel.getSize();
+        Vector content = new Vector(n);
+        for(int i=0; i<n; i++){
+            content.addElement(listModel.getElementAt(i));
+        }
+        return content;
+    }
+     
+    public Vector getRightListContent(){
+        ListModel listModel = rightList.getModel();
+        int n = listModel.getSize();
+        Vector content = new Vector(n);
+        for(int i=0; i<n; i++){
+            content.addElement(listModel.getElementAt(i));
+        }
+        return content;
+    }
+
+    /** 
+     *  Set Right List contents.
+     */
+    public void setRightListContent(Vector items){
+        if(items != null){
+            DefaultListModel listModel = new DefaultListModel();
+            for(int i=0; i<items.size(); i++){
+                listModel.addElement(items.elementAt(i));
+            }
+            
+            rightList.setModel(listModel);
+        }
+    }
+    public void setRightListContent(Object [] items){
+        if(items != null){
+            DefaultListModel listModel = new DefaultListModel();
+            for(int i=0; i<items.length; i++){
+                listModel.addElement(items[i]);
+            }
+            
+            rightList.setModel(listModel);
+        }
+    }
+    
+    public javax.swing.JPanel getLeftPanel(){
+        return leftPanel;
+    }
+    public javax.swing.JPanel getRightPanel(){
+        return rightPanel;
+    }
+    public javax.swing.JPanel getCenterPanel(){
+        return centerPanel;
+    }
+    
+    static public void main(String args[]) {
+        SelectPanel selectPane = new SelectPanel();
+	    BaseDialog dialog = (BaseDialog)SelectPanel.createDialog(new javax.swing.JFrame(), "Select pane", true,
+	                                                          selectPane,null, null, null, null);
+	    if(dialog.showModal() == BaseDialog.BUTTON_OK){
+	    }
+	    
+        
+    }
+    
+    
+     
+    /**
+     * Shows a modal SelectPanel dialog and blocks until the
+     * dialog is hidden.  If the user presses the "OK" button, then
+     * this method hides/disposes the dialog and returns the selected items.
+     * If the user presses the "Cancel" button or closes the dialog without
+     * pressing "OK", then this method hides/disposes the dialog and returns
+     * null.
+     *
+     * @param component    the parent Component for the dialog
+     * @param title        the String containing the dialog's title
+     */
+    public static Object[] showDialog(Component component, String title) {
+
+        final SelectPanel pane = new SelectPanel();
+
+        // ListTracker ok = new ListTracker(pane);
+        JDialog dialog = createDialog(component, title, true, pane, null, null,null,null);
+        //dialog.addWindowListener(new SelectPanelDialog.Closer());
+        //dialog.addComponentListener(new SelectPanelDialog.DisposeOnClose());
+
+        dialog.show(); // blocks until user brings dialog down...
+
+        //return ok.getItems();
+        return pane.getItems();
+    }
+
+
+    /**
+     * Creates and returns a new dialog containing the specified
+     * SelectPanel pane along with "OK", "Cancel",  buttons.
+     * If the "OK" or "Cancel" buttons are pressed, the dialog is
+     * automatically hidden (but not disposed).  If the "Reset"
+     * button is pressed, the color-chooser's color will be reset to the
+     * color which was set the last time show() was invoked on the dialog
+     * and the dialog will remain showing.
+     *
+     * @param c              the parent component for the dialog
+     * @param title          the title for the dialog
+     * @param modal          a boolean. When true, the remainder of the program
+     *                       is inactive until the dialog is closed.
+     * @param chooserPane    the SelectPanel to be placed inside the dialog
+     * @param okListener     the ActionListener invoked when "OK" is pressed
+     * @param cancelListener the ActionListener invoked when "Cancel" is pressed
+     * @param helpListener     the ActionListener invoked when "Help" is pressed
+     * @param applyListener the ActionListener invoked when "Apply" is pressed
+     */
+    public static JDialog createDialog(Component c, String title, boolean modal,
+                                       SelectPanel chooserPane,
+                                       ActionListener okListener,
+                                       ActionListener cancelListener,
+                                       ActionListener helpListener,
+                                       ActionListener applyListener) {
+
+        return new SelectPanelDialog(c, title, modal, chooserPane, 
+                                    okListener, cancelListener,helpListener,applyListener);
+    }
+    public Object [] getItems() {
+        return rightList.getSelectedValues();;
+    }
+}
+
+
+/*
+class ListTracker implements ActionListener, Serializable {
+    SelectPanel chooser;
+    Object [] items;
+
+    public ListTracker(SelectPanel c) {
+        chooser = c;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        items = chooser.getItems();
+    }
+
+    public Object [] getItems() {
+        return items;
+    }
+}
+*/
+
+/*
+ * Class which builds a color chooser dialog consisting of
+ * a SelectPanel with "Ok", "Cancel", "Help", "Apply" buttons.
+ *
+ * Note: This needs to be fixed to deal with localization!
+ */
+class SelectPanelDialog extends BaseDialog {
+    private SelectPanel chooserPane;
+
+    public SelectPanelDialog(Component c, String title, boolean modal, SelectPanel chooserPane) {
+        this(c, title, modal, chooserPane, null, null, null, null);
+    }
+
+    public SelectPanelDialog(Component c, String title, boolean modal, SelectPanel chooserPane,
+                             ActionListener okListener,  ActionListener cancelListener,
+                             ActionListener helpListener,ActionListener applyListener) {
+        super(JOptionPane.getFrameForComponent(c), title, modal,
+                okListener,cancelListener,helpListener,applyListener);
+        this.chooserPane = chooserPane;
+        Container contentPane = getContentPane();
+        //contentPane.setLayout(new BorderLayout());
+        contentPane.add(chooserPane, BorderLayout.CENTER);
+        okButton.setActionCommand("OK");
+        okButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                hide();
+            }
+        });
+        setBounds(10,10,460,348);
+        /*
+    	// The following few lines are used to register esc to close the dialog
+    	ActionListener cancelKeyAction = new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    ((AbstractButton)(e.getSource())).fireActionPerformed(e);
+                }
+            }; 
+    	KeyStroke cancelKeyStroke = KeyStroke.getKeyStroke((char)KeyEvent.VK_ESCAPE, false);
+    	cancelButton.registerKeyboardAction(cancelKeyAction,  cancelKeyStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    	// end esc handling
+
+        cancelButton.setActionCommand("cancel");
+        */
+        //cancelButton.addActionListener(new ActionListener() {
+        //    public void actionPerformed(ActionEvent e) {
+        //        hide();
+        //    }
+        //});
+        //buttonPane.add(cancelButton);
+
+
+        pack();
+        setLocationRelativeTo(c);
+    }
+
+    public void show() {
+        super.show();
+    }
+
+    public void reset() {
+    }
+
+}
+
+
+
+ class DragAndDropList extends JList
+    implements  DropTargetListener,DragSourceListener, DragGestureListener    {
+
+  /**
+   * enables this component to be a dropTarget
+   */
+
+  DropTarget dropTarget = null;
+
+  /**
+   * enables this component to be a Drag Source
+   */
+  DragSource dragSource = null;
+
+
+  /**
+   * constructor - initializes the DropTarget and DragSource.
+   */
+
+  public DragAndDropList() {
+    
+    dropTarget = new DropTarget (this, this);
+    dragSource = new DragSource();
+    dragSource.createDefaultDragGestureRecognizer( this, DnDConstants.ACTION_MOVE, this);
+  }
+
+  /**
+   * is invoked when you are dragging over the DropSite
+   * 
+   */
+
+  public void dragEnter (DropTargetDragEvent event) {
+    
+    // debug messages for diagnostics 
+    //System.out.println( "dragEnter");
+    event.acceptDrag (DnDConstants.ACTION_MOVE);
+  }
+
+  /**
+   * is invoked when you are exit the DropSite without dropping
+   *
+   */
+
+  public void dragExit (DropTargetEvent event) {
+    //System.out.println( "dragExit");
+    
+  }
+
+  /**
+   * is invoked when a drag operation is going on
+   * 
+   */
+
+  public void dragOver (DropTargetDragEvent event) {
+    //System.out.println( "dragOver");
+  }
+
+  /**
+   * a drop has occurred
+   * 
+   */
+
+ 
+  public void drop (DropTargetDropEvent event) {
+    
+    try {
+        Transferable transferable = event.getTransferable();
+                   
+        // we accept only Strings      
+        if (transferable.isDataFlavorSupported (DataFlavor.stringFlavor)){
+        
+            event.acceptDrop(DnDConstants.ACTION_MOVE);
+            String s = (String)transferable.getTransferData ( DataFlavor.stringFlavor);
+            addElement( s );
+            event.getDropTargetContext().dropComplete(true);
+        } 
+        else{
+            event.rejectDrop();
+        }
+    }
+    catch (IOException exception) {
+        exception.printStackTrace();
+        System.err.println( "Exception" + exception.getMessage());
+        event.rejectDrop();
+    } 
+    catch (UnsupportedFlavorException ufException ) {
+      ufException.printStackTrace();
+      System.err.println( "Exception" + ufException.getMessage());
+      event.rejectDrop();
+    }
+  }
+
+  /**
+   * is invoked if the use modifies the current drop gesture
+   * 
+   */
+    
+
+  public void dropActionChanged ( DropTargetDragEvent event ) {
+  }
+
+  /**
+   * a drag gesture has been initiated
+   * 
+   */
+  
+  public void dragGestureRecognized( DragGestureEvent event) {
+    
+    Object selected = getSelectedValue();
+    if ( selected != null ){
+        StringSelection text = new StringSelection( selected.toString()); 
+        
+        // as the name suggests, starts the dragging
+        dragSource.startDrag (event, DragSource.DefaultMoveDrop, text, this);
+    } else {
+        System.out.println( "nothing was selected");   
+    }
+  }
+
+  /**
+   * this message goes to DragSourceListener, informing it that the dragging 
+   * has ended
+   * 
+   */
+
+  public void dragDropEnd (DragSourceDropEvent event) {   
+    if ( event.getDropSuccess()){
+        removeElement();
+    }
+  }
+
+  /**
+   * this message goes to DragSourceListener, informing it that the dragging 
+   * has entered the DropSite
+   * 
+   */
+
+  public void dragEnter (DragSourceDragEvent event) {
+    //System.out.println( " dragEnter");
+  }
+
+  /**
+   * this message goes to DragSourceListener, informing it that the dragging 
+   * has exited the DropSite
+   * 
+   */
+
+  public void dragExit (DragSourceEvent event) {
+    //System.out.println( "dragExit");
+    
+  }
+
+  /**
+   * this message goes to DragSourceListener, informing it that the dragging is currently 
+   * ocurring over the DropSite
+   * 
+   */
+
+  public void dragOver (DragSourceDragEvent event) {
+    //System.out.println( "dragExit");
+    
+  }
+
+  /**
+   * is invoked when the user changes the dropAction
+   * 
+   */
+   
+  public void dropActionChanged ( DragSourceDragEvent event) {
+    //System.out.println( "dropActionChanged"); 
+  }
+
+  /**
+   * adds elements to itself
+   * 
+   */
+   
+   public void addElement( Object s ){
+        (( DefaultListModel )getModel()).addElement (s.toString());
+  }
+
+  /**
+   * removes an element from itself
+   */
+   
+  public void removeElement(){
+    (( DefaultListModel)getModel()).removeElement( getSelectedValue());
+  }
+  
+}
