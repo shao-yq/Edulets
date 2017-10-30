@@ -468,7 +468,9 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
                 int code = Integer.parseInt(str);
                 return code;
             } catch (NumberFormatException nfe) {
-                nfe.printStackTrace();
+                int code = str.charAt(0);
+                return code;
+                //nfe.printStackTrace();
             }
         }
         return 0;

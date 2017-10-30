@@ -8,7 +8,7 @@ public class StrokeBesier extends StrokeBase {
 	Vector ctrlPoints;
 
 	public StrokeBesier(Vector points) {
-		super(STROKE_BEZIER, points);
+		super(0,STROKE_BEZIER, points);
 		ctrlPoints = points;
 		generateCurve();
 	}

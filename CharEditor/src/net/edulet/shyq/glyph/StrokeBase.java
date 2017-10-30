@@ -14,7 +14,13 @@ public class StrokeBase {
 	public final static int STROKE_ARC = 3;
 	public final static int STROKE_CIRCLE = 4;
 	public final static int STROKE_ELLIPSE = 5;
-	
+
+	public int getCode() {
+		return code;
+	}
+
+	int code;
+
 	/**
 	 * Draw line segment, arc, circle/ellipse, or draw Bezier curve.
 	 */
@@ -25,10 +31,11 @@ public class StrokeBase {
 	Vector<Point> points;
 
 	public StrokeBase(){
-		this(STROKE_NONE, new  Vector<Point>());
+		this(0, STROKE_NONE, new  Vector<Point>());
 	}
 
-	public StrokeBase(int type, Vector<Point> points) {
+	public StrokeBase(int code, int type, Vector<Point> points) {
+		this.code = code;
 		this.type = type;
 
 		this.points = points;
@@ -91,6 +98,8 @@ public class StrokeBase {
 	}
 
 	public void save(DataOutputStream dos) throws IOException {
+		dos.writeInt(code);
+
 		String className = getClass().getCanonicalName();
 		//dos.writeUTF(className);
 
@@ -107,6 +116,8 @@ public class StrokeBase {
 	}
 
 	public void load(DataInputStream dis)throws IOException {
+		code = dis.readInt();
+
 		type = dis.readInt();
 
 		// points

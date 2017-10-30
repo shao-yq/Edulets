@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
 
-public abstract class CharComponent implements GlyphBase {
+public  class CharComponent implements GlyphBase {
 	String name = "";
 	String description = "";
 
