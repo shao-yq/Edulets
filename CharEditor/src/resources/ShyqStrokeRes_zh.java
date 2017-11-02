@@ -164,7 +164,7 @@ public class ShyqStrokeRes_zh extends ListResourceBundle {
         {"snow4Tooltip",  "暴雪"},
         {"snow5Tooltip",  "雨加雪"},
         
-        {"toolbox",  "pointer newCurve modifyCurve closedCurve delete text  Heng Shu Dian Ti Pie Na HengZhe HengPie HengGou HengZheZhe HengZheGou HengZheZheZheGou HengZheWan HengPieWanGou HengZheTi HengZheWanGou HengZheZhePie  ShuGou ShuZhe ShuTi ShuWan ShuWanGou ShuZhePie ShuZheZhe ShuZheZheGou PieDian PieZhe XieGou WoGou"},
+        {"toolboxStroke",  "pointer newCurve modifyCurve closedCurve delete text  Heng Shu Dian Ti Pie Na HengZhe HengPie HengGou HengZheZhe HengZheGou HengZheZheZheGou HengZheWan HengPieWanGou HengZheTi HengZheWanGou HengZheZhePie  ShuGou ShuZhe ShuTi ShuWan ShuWanGou ShuZhePie ShuZheZhe ShuZheZheGou PieDian PieZhe XieGou WoGou"},
         {"Dian.text",  "Dian"},
         {"Dian.image", "resources/Dian.png"},
         {"Dian.tooltip",  "Dian"},

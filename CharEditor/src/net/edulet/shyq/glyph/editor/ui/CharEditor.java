@@ -2,12 +2,10 @@ package net.edulet.shyq.glyph.editor.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -18,7 +16,6 @@ import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.awt.print.PrinterJob;
 import java.io.File;
-import java.io.IOException;
 import java.util.Hashtable;
 
 import javax.swing.*;
@@ -42,7 +39,8 @@ public class CharEditor extends JPanel implements MouseMotionListener, MouseList
     private Hashtable commands;
     private JMenuBar menubar;
     private JToolBar toolbar;
-    private JToolBar toolbox;
+    private JToolBar toolboxStroke;
+    private JToolBar toolboxLayout;
     private StatusBar status;
     private JFrame elementTreeFrame;
 
@@ -50,6 +48,7 @@ public class CharEditor extends JPanel implements MouseMotionListener, MouseList
 
     CommandActionManager actionManager = new CommandActionManager();
     JButton[] toolButtons = new JButton[40];
+    JButton[] layoutButtons = new JButton[12];
 
     /**
      * Listener for the edits on the current document.
@@ -125,8 +124,28 @@ public class CharEditor extends JPanel implements MouseMotionListener, MouseList
         return ShyqUI.getResourceString(TITLE);
     }
 
+    EditorPanel createEditorPanel(int editMode) {
+        EditorPanel panel = null;
+        switch(editMode){
+            case EDIT_STROKE:
+                break;
+            case EDIT_COMPONENT:
+                panel = new CharEditorPanel("EditorPanel");
+                break;
+            case EDIT_CHARACTER:
+                break;
+        }
+        return panel;
+    }
+
+    public final static int EDIT_NONE=0;
+    public final static int EDIT_STROKE=1;
+    public final static int EDIT_COMPONENT=2;
+    public final static int EDIT_CHARACTER=3;
+
     private void init(JFrame frame) {
-        editorPanel = new EditorPanel("EditorPanel");
+        int editorMode = EDIT_COMPONENT;
+        editorPanel = createEditorPanel(editorMode);
 
         addMouseMotionListener(this);
         addMouseListener(this);
@@ -157,8 +176,8 @@ public class CharEditor extends JPanel implements MouseMotionListener, MouseList
         JToolBar toolbar = ShyqUI.createToolbar(commands, "toolbar");
 
         panel.add(toolbar, BorderLayout.NORTH);
-        toolbox = (JToolBar) ShyqUI.createToolbox(commands, "toolbox", 0, 5, toolButtons);
-        panel.add(toolbox, BorderLayout.WEST);
+        toolboxStroke = (JToolBar) ShyqUI.createToolbox(commands, "toolboxStroke", 0, 5, toolButtons);
+        panel.add(toolboxStroke, BorderLayout.WEST);
         for (int i = 0; i < toolButtons.length; i++) {
             JButton b = toolButtons[i];
             if (b != null) {
@@ -173,6 +192,21 @@ public class CharEditor extends JPanel implements MouseMotionListener, MouseList
             }
         }
 
+        toolboxLayout = (JToolBar) ShyqUI.createToolbox(commands, "toolboxLayout", 0, 5, layoutButtons);
+        panel.add(toolboxLayout, BorderLayout.EAST);
+        for (int i = 0; i < layoutButtons.length; i++) {
+            JButton b = layoutButtons[i];
+            if (b != null) {
+                Action a = getAction(pickToolAction);
+                if (a != null) {
+                    b.setActionCommand(pickToolAction);
+                    b.addActionListener(a);
+                    b.setEnabled(true);
+                } else {
+                    b.setEnabled(false);
+                }
+            }
+        }
         add(panel, BorderLayout.CENTER);
         panel.add(editorPanel, BorderLayout.CENTER);
         StatusBar statusBar = createStatusbar();
@@ -443,7 +477,7 @@ public class CharEditor extends JPanel implements MouseMotionListener, MouseList
         public void actionPerformed(ActionEvent e) {
             Frame frame = getFrame();
             toolboxFlag = !toolboxFlag;
-            toolbox.setVisible(toolboxFlag);
+            toolboxStroke.setVisible(toolboxFlag);
             revalidate();
         }
     }

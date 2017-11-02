@@ -21,7 +21,11 @@ public class Rectangle {
     public double y;
     public double width;
     public double height;
-    
+
+    public Rectangle(){
+        this(0,0);
+    }
+
     public Rectangle(double w, double h) {
     	x = 0;
     	y = 0;
@@ -36,17 +40,40 @@ public class Rectangle {
     	this.height = h;
     }
     
-    public Rectangle merge(Rectangle rect) {
-    	if(rect instanceof NullRectangle) {
+    public Rectangle union(Rectangle rect) {
+    	if(rect == null ) {
     		return this;
     	}
+		// Upper-Left cornner
     	double x1 = Math.min(x, rect.x);
     	double y1 = Math.min(y, rect.y);
+		// Right-bottom cornner
     	double x2 = Math.max(x+width, rect.x+rect.width);
     	double y2 = Math.max(y+height, rect.y+rect.height);
     	return new Rectangle(x1, y1, x2-x1, y2-y1);
     }
-    
+
+
+    public void merge(Rectangle rect) {
+        if(rect == null ) {
+            return ;
+        }
+
+        // Upper-Left cornner
+        double x1 = Math.min(x, rect.x);
+        double y1 = Math.min(y, rect.y);
+        // Right-bottom cornner
+        double x2 = Math.max(x+width, rect.x+rect.width);
+        double y2 = Math.max(y+height, rect.y+rect.height);
+
+        // update
+        x = x1;
+        y = y1;
+
+        width = x2-x1;
+        height = y2-y1;
+    }
+
     public boolean contains(double px, double py) {
     	if(px < x || py < y)
     		return false;

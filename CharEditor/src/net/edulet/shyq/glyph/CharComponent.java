@@ -1,5 +1,7 @@
 package net.edulet.shyq.glyph;
 
+import net.edulet.shyq.glyph.editor.ui.CharFactory;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -21,7 +23,7 @@ public  class CharComponent implements GlyphBase {
 	double scaleX = 1;
 	double scaleY = 1;
 	Point anchor = new Point(0, 0);
-	int layout;
+	CharLinearLayout layout;
 	Vector<CharComponent> components = new Vector();;
 
 	public void reset() {
@@ -147,13 +149,11 @@ public  class CharComponent implements GlyphBase {
     }
     
     public Rectangle getBounds() {
+        Rectangle rect = new Rectangle();
     	if(hasChild()) {
-    		Rectangle rect = null;
     		for(int i=0; i<components.size(); i++) {
     			Rectangle r = ((CharComponent)components.get(i)).getBounds();
-    			if(rect != null) {
-    				rect = rect.merge(r);
-    			}
+                rect.merge(r);
     		}
     		
     		rect.width *= scaleX;
@@ -162,9 +162,10 @@ public  class CharComponent implements GlyphBase {
     		rect.y *= scaleY;
     		
     		rect.move(anchor.x, anchor.y);
-			return rect;
-    	} else 
-    		return new NullRectangle();
+    	}
+
+    	return rect;
+
     }
 
 	public boolean isOnContour(double x, double y) {
@@ -224,7 +225,7 @@ public  class CharComponent implements GlyphBase {
 		dos.writeDouble(ax);
 		dos.writeDouble(ay);
 
-		dos.writeInt(layout);
+		dos.writeInt(layout.getCode());
 		// components
 		dos.writeInt(components.size());
 		for(int i=0; i<components.size(); i++){
@@ -246,7 +247,9 @@ public  class CharComponent implements GlyphBase {
 		anchor.setX(dis.readDouble());
 		anchor.setY(dis.readDouble());
 
-		layout = dis.readInt();
+		int layoutCode = dis.readInt();
+		layout = CharFactory.getLayout(layoutCode);
+
 		// components
 		int count = dis.readInt();
 		for(int i=0; i<count; i++){

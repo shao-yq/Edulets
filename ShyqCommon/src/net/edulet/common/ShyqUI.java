@@ -582,16 +582,22 @@ public class ShyqUI {
 
     public static JButton createToolbarButton(java.util.ResourceBundle resources, java.util.Hashtable commands, String key) {
         //URL url = getResource(resources, key + imageSuffix);
-        String name = getResourceString(resources, key + imageSuffix);
+        String imageName = getResourceString(resources, key + imageSuffix);
         //String imageName = System.getProperty(APP_ROOT)+IMAGE_DIR+File.separator+name;
-        String imageName = name;
+
         JButton b = null;
-        //if(url!= null)
-        b = new JButton(new ImageIcon(imageName)) {
-            public float getAlignmentY() {
-                return 0.5f;
-            }
-        };
+        String buttonText = getResourceString(resources, key + textSuffix);
+        if(imageName!=null && imageName.trim().length()!=0) {
+            //if(url!= null)
+            b = new JButton(new ImageIcon(imageName)) {
+                public float getAlignmentY() {
+                    return 0.5f;
+                }
+            };
+        } else {
+            b = new JButton(buttonText);
+        }
+
         //else
         //    b = new JButton(key);
         b.setRequestFocusEnabled(false);

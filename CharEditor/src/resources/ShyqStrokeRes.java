@@ -169,7 +169,7 @@ public class ShyqStrokeRes extends ListResourceBundle {
         {"snow4.tooltip",  "Heavy Snow"},
         {"snow5.tooltip",  "Rain & Snow"},
 
-        {"toolbox",  "pointer newCurve modifyCurve closedCurve delete text  Heng Shu Dian Ti Pie Na HengZhe HengPie HengGou HengZheZhe HengZheGou HengZheZheZheGou HengZheWan HengPieWanGou HengZheTi HengZheWanGou HengZheZhePie  ShuGou ShuZhe ShuTi ShuWan ShuWanGou ShuZhePie ShuZheZhe ShuZheZheGou PieDian PieZhe XieGou WoGou"},
+        {"toolboxStroke",  "pointer newCurve modifyCurve closedCurve delete text  Heng Shu Dian Ti Pie Na HengZhe HengPie HengGou HengZheZhe HengZheGou HengZheZheZheGou HengZheWan HengPieWanGou HengZheTi HengZheWanGou HengZheZhePie  ShuGou ShuZhe ShuTi ShuWan ShuWanGou ShuZhePie ShuZheZhe ShuZheZheGou PieDian PieZhe XieGou WoGou"},
         {"Dian.text",  "Dian"},
         {"Dian.image", "resources/Dian.png"},
         {"Dian.tooltip",  "Dian"},
@@ -274,6 +274,42 @@ public class ShyqStrokeRes extends ListResourceBundle {
         {"WoGou.image",   "resources/WoGou.png"},
         {"WoGou.tooltip",  "WoGou"},
 
+		{"toolboxLayout",  "LeftRight UpperLower LeftCenterRight UpperCenterLower OuterInner UpperOuter  LowerOuter LeftOuter UpperLeftOuter UpperRightOuter  LeftLowerOuter Cascade"},
+			{"LeftRight.text",  "⿰"},
+			{"LeftRight.tooltip",  "LeftRight"},
 
-	}; 
+			{"UpperLower.text",  "⿱"},
+			{"UpperLower.tooltip",  "UpperLower"},
+
+			{"LeftCenterRight.text",  "⿲"},
+			{"LeftCenterRight.tooltip",  "LeftCenterRight"},
+
+			{"UpperCenterLower.text",  "⿳"},
+			{"UpperCenterLower.tooltip",  "UpperCenterLower"},
+
+			{"OuterInner.text",  "⿴"},
+			{"OuterInner.tooltip",  "OuterInner"},
+
+			{"UpperOuter.text",  "⿵"},
+			{"UpperOuter.tooltip",  "UpperOuter"},
+
+			{"LowerOuter.text",  "⿶"},
+			{"LowerOuter.tooltip",  "LowerOuter"},
+
+			{"LeftOuter.text",  "⿷"},
+			{"LeftOuter.tooltip",  "LeftOuter"},
+
+			{"UpperLeftOuter.text",  "⿸"},
+			{"UpperLeftOuter.tooltip",  "UpperLeftOuter"},
+
+			{"UpperRightOuter.text",  "⿹"},
+			{"UpperRightOuter.tooltip",  "UpperRightOuter"},
+
+			{"LeftLowerOuter.text",  "⿺"},
+			{"LeftLowerOuter.tooltip",  "LeftLowerOuter"},
+
+			{"Cascade.text",  "⿻"},
+			{"Cascade.tooltip",  "Cascade"},
+
+	};
 } 

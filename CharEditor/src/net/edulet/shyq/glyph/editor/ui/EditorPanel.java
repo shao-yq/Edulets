@@ -11,11 +11,11 @@ import java.util.Vector;
 import javax.swing.*;
 
 import net.edulet.shyq.glyph.CharComponent;
-import net.edulet.shyq.glyph.ChineseChar;
 import net.edulet.shyq.glyph.GraphicsContext;
 import net.edulet.shyq.glyph.Rectangle;
+import net.edulet.shyq.glyph.StrokeBase;
 
-public class EditorPanel extends JPanel implements MouseMotionListener, MouseListener {
+public abstract class EditorPanel extends JPanel implements MouseMotionListener, MouseListener {
 
     public final static int StatusIdle = 0;
     public final static int StatusEdit = 1;
@@ -58,7 +58,6 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
     CharComponent currentComponent;
     Vector selectedShapes;
     Vector shapeList;
-    ChineseChar chineseChar;
 
     int status = 0;
 
@@ -70,8 +69,10 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
 
     public EditorPanel(String title) {
         init();
-        chineseChar= new ChineseChar(0);
-        shapeList = chineseChar.getComponents();
+        shapeList = getWorkingShaps(); // chineseChar.getComponents();
+    }
+    protected   Vector getWorkingShaps(){
+        return new Vector();
     }
 
     JFrame frame;
@@ -80,7 +81,7 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
 
     }
 
-    private void init() {
+    protected void init() {
         width = 400;
         height = 500;
 
@@ -99,87 +100,14 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
 
     }
 
+//    protected abstract void newComponent();
+//    protected abstract void loadComponent()throws IOException;
+//
     int currentTool = 0;
 
-    public void pickTool(int t) {
-        currentTool = t;
-        switch(currentTool) {
-            case ToolCode.ToolNewLine:      // new character / component
-                newCharacter();
+    public abstract void pickTool(int t);
 
-                break;
-            case ToolCode.ToolModifyLine:
-                break;
-            case ToolCode.ToolClosedContour:   //  Load  existing character / component to Modify
-                try {
-                    loadCharacter();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-        }
-    }
-
-    void loadCharacter() throws IOException {
-        if(fileDialog==null)
-            fileDialog = new FileDialog(frame);
-
-        fileDialog.setMode(FileDialog.LOAD);
-        fileDialog.setVisible(true);
-
-        String fileName = fileDialog.getFile();
-        if (fileName == null) {
-            return;
-        }
-        String directory = fileDialog.getDirectory();
-        File f = new File(directory, fileName);
-        if(!f.exists()){
-            return;
-        }
-        DataInputStream  dis= null;
-        try {
-            dis = new DataInputStream(new FileInputStream(f));
-            if(dis!=null){
-                chineseChar.load(dis);
-                shapeList = chineseChar.getComponents();
-                invalidate();
-            }
-            dis.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void newCharacter(){
-        // New Chinese character
-        // 1. Prompt to save the current character
-        if(chineseChar==null){
-            chineseChar = new ChineseChar(0);
-        }
-        if(chineseChar.isValid()){
-            try {
-                saveCharacter(chineseChar);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
-
-        // input new  character code
-        int code = promptNewChar();
-        if(isValidCode(code)) {
-
-            // 2. Reset to new character
-            chineseChar.reset();
-            chineseChar.setCode(code);
-
-
-        } else {
-            JOptionPane.showMessageDialog(null,"Invalid Input Code ", "Warning", JOptionPane.WARNING_MESSAGE);
-            //JOptionPane.showMessageialog(null, "Invalid Input Code ", "Warning", JOptionPane.WARNING_MESSAGE);
-        }
-    }
-
-    private boolean isValidCode(int code) {
+    protected boolean isValidCode(int code) {
         return code != 0;
     }
 
@@ -350,7 +278,7 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
         return selectedShapes;
     }
 
-    void addCharComponent(CharComponent stroke) {
+    void addStroke(CharComponent stroke) {
         shapeList.add(stroke);
     }
 
@@ -370,16 +298,17 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
         int x, y;
         double xd, yd;
         CharComponent component = null;
+        CharComponent stroke = null;
         x = e.getX();
         y = e.getY();
         int clickCount = e.getClickCount();
         int modifiers = e.getModifiers();
         if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
-            CharComponent stroke = null;
+
             if (ToolCode.isStrokeCode(currentTool)) {
-                stroke = CharFactory.getComponentByToolCode(currentTool);
+                stroke = CharFactory.getStrokeByToolCode(currentTool);
                 stroke.move(x, y);
-                addCharComponent(stroke);
+                addStroke(stroke);
                 redrawBuffer();
 
                 repaint();
@@ -461,44 +390,9 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
         }
     }
 
-    private int promptNewChar() {
-        String  str = JOptionPane.showInputDialog("请输入的编码值：");
-        if(str!=null && str.length()>0){
-            try {
-                int code = Integer.parseInt(str);
-                return code;
-            } catch (NumberFormatException nfe) {
-                int code = str.charAt(0);
-                return code;
-                //nfe.printStackTrace();
-            }
-        }
-        return 0;
-    }
 
-    private void saveCharacter(ChineseChar chineseChar) throws IOException {
+    protected abstract int promptNew();
 
-        FileDialog fileDialog;
-        fileDialog = new FileDialog(frame);
-
-        fileDialog.setMode(FileDialog.SAVE);
-        fileDialog.setVisible(true);
-
-        String fileName = fileDialog.getFile();
-        if (fileName == null) {
-            return;
-        }
-        String directory = fileDialog.getDirectory();
-        File f = new File(directory, fileName);
-        if(!f.exists()){
-            f.createNewFile();
-        }
-        DataOutputStream  dos=new DataOutputStream(new FileOutputStream(f));
-        if(dos!=null){
-            chineseChar.save(dos);
-        }
-        dos.close();
-    }
 
     private void setStatus(int status) {
         this.status = status;

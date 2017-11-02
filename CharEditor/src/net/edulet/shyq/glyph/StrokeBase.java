@@ -41,9 +41,57 @@ public class StrokeBase {
 		this.points = points;
 	}
 
+	Point anchor = new Point(0, 0);
+	public void setAnchor(Point p) {
+		anchor = p;
+	}
+
+	public Point getAnchor() {
+		return anchor;
+	}
+	public void move(double dx, double dy) {
+		anchor.move(dx,  dy);
+	}
+	double scaleX = 1;
+	double scaleY = 1;
+	public void setScales(double sx, double sy) {
+		scaleX = sx;
+		scaleY = sy;
+	}
+
+	public void setScaleX(double sx) {
+		scaleX = sx;
+	}
+
+	public void setScaleY(double sy){
+		scaleY = sy;
+	}
+
+	public double getScaleX() {
+		return scaleX;
+	}
+
+	public double getScaleY() {
+		return scaleY;
+	}
+
+	public boolean contains(double x, double y){
+		Rectangle rect = getBounds();
+		//rect.move(anchor.x, anchor.y);
+		if(rect.contains(x,y))
+			return true;
+		return false;
+	}
+	public boolean contains(Point p){
+		Rectangle rect = getBounds();
+		if(rect.contains(p))
+			return false;
+		return false;
+	}
+
 	public Rectangle getBounds() {
 		if(points == null || points.size()==0)
-			return new NullRectangle();
+			return new Rectangle();
 		
 		int pointCount = points.size();
 		

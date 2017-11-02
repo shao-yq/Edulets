@@ -6,22 +6,25 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class SimpleStroke extends CharComponent {
+public class SimpleStrokeComponent extends CharComponent {
     StrokeBase stroke;
-    public SimpleStroke(){
+    public SimpleStrokeComponent(){
         this(null);
     }
 
-    public SimpleStroke(StrokeBase strokeBase) {
+    public SimpleStrokeComponent(StrokeBase strokeBase) {
         stroke = strokeBase;
     }
 
     public Rectangle getBounds() {
         Rectangle rect = stroke.getBounds();
+        // Sacle
         rect.width *= scaleX;
         rect.height *= scaleY;
         rect.x *= scaleX;
         rect.y *= scaleY;
+
+        // translate
         if (null != anchor) {
             rect.x += anchor.getX();
             rect.y += anchor.getY();

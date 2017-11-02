@@ -1,12 +1,9 @@
 package net.edulet.shyq.glyph.editor.ui;
 
+import java.io.*;
 import java.util.Vector;
 
-import net.edulet.shyq.glyph.CharComponent;
-import net.edulet.shyq.glyph.Point;
-import net.edulet.shyq.glyph.SimpleStroke;
-import net.edulet.shyq.glyph.StrokeBase;
-import net.edulet.shyq.glyph.StrokeLines;
+import net.edulet.shyq.glyph.*;
 
 public class CharFactory {
 	
@@ -43,9 +40,9 @@ public class CharFactory {
 		return 0;
 	}
 
-	public static CharComponent getComponentByToolCode(int toolCode) {
+	public static CharComponent getStrokeByToolCode(int toolCode) {
 		int code = lookupStrokeCode(toolCode);
-		return (CharComponent) new SimpleStroke(getStroke(code));
+		return (CharComponent) new SimpleStrokeComponent(getStroke(code));
 		
 	}
 	
@@ -66,6 +63,77 @@ public class CharFactory {
 		}
 		
 	}
+
+	public static void  saveStrokes(String fileName) throws IOException {
+		// Check file name
+		if(fileName==null || fileName.trim().length()==0){
+			return ;
+		}
+
+		// Setup file instance
+		File f = new File(fileName);
+		if(!f.exists()){
+			f.createNewFile();
+		}
+		// Setup dos
+		DataOutputStream  dos=new DataOutputStream(new FileOutputStream(f));
+		saveStrokes( dos);
+
+		dos.close();
+	}
+
+	static void  saveStrokes(DataOutputStream dos) throws IOException {
+		dos.writeInt(codeMap.length);
+
+		for(int i=0; i<codeMap.length; i++) {
+			StrokeBase stroke = baseStrokes[i];
+			String className = stroke.getClass().getCanonicalName();
+			dos.writeUTF(className);
+
+			stroke.save(dos);
+		}
+	}
+
+	public static void  loadStrokes(String fileName) throws IOException {
+		// Check file name
+		if(fileName==null || fileName.trim().length()==0){
+			return ;
+		}
+
+		// Setup file instance
+		File f = new File(fileName);
+		if(!f.exists()){
+			return ;
+		}
+		// Setup dos
+		DataInputStream  dis=new DataInputStream(new FileInputStream(f));
+		loadStrokes( dis);
+
+		dis.close();
+	}
+
+	static void  loadStrokes(DataInputStream dis) throws IOException {
+		int count = dis.readInt();
+		baseStrokes = new StrokeBase[count];
+		for(int i=0; i<codeMap.length; i++) {
+			String className =dis.readUTF();
+			Class theClass = null;
+			try {
+				theClass = Class.forName(className);
+				StrokeBase stroke = (StrokeBase)theClass.newInstance();
+
+				stroke.load(dis);
+				baseStrokes[i] = stroke;
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 
 	private static StrokeBase createStroke(int code) {
 	    Vector stroke = new Vector();
@@ -207,4 +275,38 @@ public class CharFactory {
 		return componet;
 	}
 
+    public static CharLinearLayout getLayout(int code) {
+		CharLinearLayout layout = null;
+		switch (code){
+			default:
+				layout = new CharLinearLayout();
+		}
+		return layout;
+    }
+
+	public static void main(String[] args){
+		String strokeFile = "MyStrokes.dat";
+		//initStrokes();
+		// Save the strokes to file
+		//testSave(strokeFile);
+		// Load the strokes from file
+
+		testLoad(strokeFile);
+	}
+
+	public static void testSave(String fileName){
+		try {
+			saveStrokes(fileName);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void testLoad(String fileName){
+		try {
+			loadStrokes(fileName);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
