@@ -159,19 +159,21 @@ public class ShyqUI {
         loadResources(defaultResourceName);
     }
 
-    public static void loadResources(String resourceName) {
-        loadResources(resourceName, Locale.getDefault());
+    public static ResourceBundle loadResources(String resourceName) {
+        return loadResources(resourceName, Locale.getDefault());
     }
 
 
-    public static void loadResources(String resourceName, Locale locale) {
+    public static ResourceBundle loadResources(String resourceName, Locale locale) {
         try {
             resources = ResourceBundle.getBundle(resourceName, locale);
+
             //installResources();
         } catch (MissingResourceException mre) {
             JOptionPane.showMessageDialog(new JFrame(), resourceName + " not found.",
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
+        return resources;
     }
 
     private static void loadShyqResources() {

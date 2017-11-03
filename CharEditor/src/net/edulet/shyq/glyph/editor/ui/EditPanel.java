@@ -15,7 +15,7 @@ import net.edulet.shyq.glyph.GraphicsContext;
 import net.edulet.shyq.glyph.Rectangle;
 import net.edulet.shyq.glyph.StrokeBase;
 
-public abstract class EditorPanel extends JPanel implements MouseMotionListener, MouseListener {
+public abstract class EditPanel extends JPanel implements MouseMotionListener, MouseListener {
 
     public final static int StatusIdle = 0;
     public final static int StatusEdit = 1;
@@ -67,7 +67,7 @@ public abstract class EditorPanel extends JPanel implements MouseMotionListener,
 //    int offsetX, offsetY;
     int oldX, oldY, currentX, currentY;
 
-    public EditorPanel(String title) {
+    public EditPanel(String title) {
         init();
         shapeList = getWorkingShaps(); // chineseChar.getComponents();
     }

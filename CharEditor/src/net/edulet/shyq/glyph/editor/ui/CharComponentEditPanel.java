@@ -11,10 +11,10 @@ import java.util.Vector;
  * @author Shao Yongqing
  * Date: 2017/10/30.
  */
-public class CharEditorPanel extends EditorPanel{
+public class CharComponentEditPanel extends EditPanel {
     ChineseChar chineseChar;
 
-    public CharEditorPanel(String title) {
+    public CharComponentEditPanel(String title) {
         super(title);
     }
     protected void init(){

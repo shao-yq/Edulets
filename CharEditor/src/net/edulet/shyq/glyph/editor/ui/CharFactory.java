@@ -1,7 +1,6 @@
 package net.edulet.shyq.glyph.editor.ui;
 
 import java.io.*;
-import java.util.Vector;
 
 import net.edulet.shyq.glyph.*;
 
@@ -144,7 +143,7 @@ public class CharFactory {
 //    		    stroke.add(new Point(28,64));
 //    		    stroke.add(new Point(104,52));
 //    		    stroke.add(new Point(119,58));
-    		    
+
     		    points.add(new Point(-54,-2));
     		    points.add(new Point(-36,2));
     		    points.add(new Point(40,-10));
