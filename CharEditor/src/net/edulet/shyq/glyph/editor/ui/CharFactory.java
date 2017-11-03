@@ -136,8 +136,8 @@ public class CharFactory {
 
 
 	private static StrokeBase createStroke(int code) {
-	    Vector stroke = new Vector();
-	    StrokeBase componet = null;
+		StrokeBase stroke = null;
+	    PolyLine points = new PolyLine();
 		switch(code){
 		    case STROKE_HENG:
 //    		    stroke.add(new Point(10,60));
@@ -145,10 +145,10 @@ public class CharFactory {
 //    		    stroke.add(new Point(104,52));
 //    		    stroke.add(new Point(119,58));
     		    
-    		    stroke.add(new Point(-54,-2));
-    		    stroke.add(new Point(-36,2));
-    		    stroke.add(new Point(40,-10));
-    		    stroke.add(new Point(55,-4));
+    		    points.add(new Point(-54,-2));
+    		    points.add(new Point(-36,2));
+    		    points.add(new Point(40,-10));
+    		    points.add(new Point(55,-4));
 
     		    break;
 		    case STROKE_SHU:
@@ -156,18 +156,18 @@ public class CharFactory {
 //		        stroke.add(new Point(58,23));
 //		        stroke.add(new Point(58,100));
 //		        stroke.add(new Point(59,108));
-		        stroke.add(new Point(-12,-51));
-		        stroke.add(new Point(-6,-41));
-		        stroke.add(new Point(-6,36));
-		        stroke.add(new Point(-5,42));
+		        points.add(new Point(-12,-51));
+		        points.add(new Point(-6,-41));
+		        points.add(new Point(-6,36));
+		        points.add(new Point(-5,42));
 		        break;
 		    case STROKE_DIAN:
 //		        stroke.add(new Point(49,67));
 //		        stroke.add(new Point(75,84));
 //		        stroke.add(new Point(77,93));
-		        stroke.add(new Point(-15,-10));
-		        stroke.add(new Point(11,7));
-		        stroke.add(new Point(12,16));
+		        points.add(new Point(-15,-10));
+		        points.add(new Point(11,7));
+		        points.add(new Point(12,16));
 		    	break;
 		    case STROKE_PIE:
 //		        stroke.add(new Point(59,16));
@@ -177,12 +177,12 @@ public class CharFactory {
 //		        stroke.add(new Point(38,102));
 //		        stroke.add(new Point(27,109));
 
-		        stroke.add(new Point(-5,-48));
-		        stroke.add(new Point(3,-39));
-		        stroke.add(new Point(-1,8));
-		        stroke.add(new Point(-7,20));
-		        stroke.add(new Point(-26,38));
-		        stroke.add(new Point(-37,45));
+		        points.add(new Point(-5,-48));
+		        points.add(new Point(3,-39));
+		        points.add(new Point(-1,8));
+		        points.add(new Point(-7,20));
+		        points.add(new Point(-26,38));
+		        points.add(new Point(-37,45));
 		        break;
 		    case STROKE_NA:
 //		        stroke.add(new Point(23,15));
@@ -192,12 +192,12 @@ public class CharFactory {
 //		        stroke.add(new Point(88,97));
 //		        stroke.add(new Point(106,97));
 
-		        stroke.add(new Point(-41,-49));
-		        stroke.add(new Point(-32,-46));
-		        stroke.add(new Point(-24,-12));
-		        stroke.add(new Point(-1,20));
-		        stroke.add(new Point(24,33));
-		        stroke.add(new Point(42,33));
+		        points.add(new Point(-41,-49));
+		        points.add(new Point(-32,-46));
+		        points.add(new Point(-24,-12));
+		        points.add(new Point(-1,20));
+		        points.add(new Point(24,33));
+		        points.add(new Point(42,33));
 		        break;
 		    case STROKE_HengZhe:
 //    		    stroke.add(new Point(10,18));
@@ -207,12 +207,12 @@ public class CharFactory {
 //    		    stroke.add(new Point(80,25));
 //    		    stroke.add(new Point(76,92));
     		    
-    		    stroke.add(new Point(-40,-32));
-    		    stroke.add(new Point(-28,-29));
-    		    stroke.add(new Point(22,-39));
-    		    stroke.add(new Point(34,-33));
-    		    stroke.add(new Point(30,-25));
-    		    stroke.add(new Point(26,42));
+    		    points.add(new Point(-40,-32));
+    		    points.add(new Point(-28,-29));
+    		    points.add(new Point(22,-39));
+    		    points.add(new Point(34,-33));
+    		    points.add(new Point(30,-25));
+    		    points.add(new Point(26,42));
 		    	break;
 		    case STROKE_HengPie:
 //    		    stroke.add(new Point(23,16));
@@ -224,14 +224,14 @@ public class CharFactory {
 //    		    stroke.add(new Point(23,88));
 //    		    stroke.add(new Point(9, 90));
     		    
-    		    stroke.add(new Point(-27,-34));
-    		    stroke.add(new Point( 23,-38));
-    		    stroke.add(new Point( 28,-34));
-     		    stroke.add(new Point( 21,-12));
-    		    stroke.add(new Point( 12,  9));
-    		    stroke.add(new Point(-5,27));
-    		    stroke.add(new Point(-27,38));
-    		    stroke.add(new Point(-41,40));
+    		    points.add(new Point(-27,-34));
+    		    points.add(new Point( 23,-38));
+    		    points.add(new Point( 28,-34));
+     		    points.add(new Point( 21,-12));
+    		    points.add(new Point( 12,  9));
+    		    points.add(new Point(-5,27));
+    		    points.add(new Point(-27,38));
+    		    points.add(new Point(-41,40));
 		    	break;
 		    case STROKE_HengGou:
 //    		    stroke.add(new Point(10,47));
@@ -240,11 +240,11 @@ public class CharFactory {
 //    		    stroke.add(new Point(82,47));
 //    		    stroke.add(new Point(67,62));
     		    
-    		    stroke.add(new Point(-40,-3));
-    		    stroke.add(new Point(-29, 0));
-    		    stroke.add(new Point(26,-7));
-    		    stroke.add(new Point(32,-3));
-    		    stroke.add(new Point(17,12));
+    		    points.add(new Point(-40,-3));
+    		    points.add(new Point(-29, 0));
+    		    points.add(new Point(26,-7));
+    		    points.add(new Point(32,-3));
+    		    points.add(new Point(17,12));
 
     		    break;
 		    case STROKE_HengZheGou:
@@ -257,22 +257,22 @@ public class CharFactory {
 //    		    stroke.add(new Point(67,89));
 //    		    stroke.add(new Point(53,79));
     		    
-    		    stroke.add(new Point(-40,-35));
-    		    stroke.add(new Point(-29,-32));
-    		    stroke.add(new Point(22,-41));
-    		    stroke.add(new Point(34,-35));
-    		    stroke.add(new Point(30,-30));
-    		    stroke.add(new Point(26,30));
-    		    stroke.add(new Point(17,39));
-    		    stroke.add(new Point( 3,29));
+    		    points.add(new Point(-40,-35));
+    		    points.add(new Point(-29,-32));
+    		    points.add(new Point(22,-41));
+    		    points.add(new Point(34,-35));
+    		    points.add(new Point(30,-30));
+    		    points.add(new Point(26,30));
+    		    points.add(new Point(17,39));
+    		    points.add(new Point( 3,29));
 		    	break;
 		    default:
 		        System.out.println("Not supported Code:"+code);
 		        break;
 		}
-		if(stroke != null)
-			componet = new StrokeLines(code, stroke);
-		return componet;
+		if(points != null)
+			stroke = new StrokeLines(code, points);
+		return stroke;
 	}
 
     public static CharLinearLayout getLayout(int code) {

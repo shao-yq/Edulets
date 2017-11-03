@@ -107,6 +107,8 @@ public abstract class EditorPanel extends JPanel implements MouseMotionListener,
 
     public abstract void pickTool(int t);
 
+    public abstract void pickLayout(int t);
+
     protected boolean isValidCode(int code) {
         return code != 0;
     }

@@ -93,11 +93,21 @@ public class GraphicsImpl implements GraphicsContext {
 
         for (int i = 1; i < pointx.length; i++) {
             X = toScreenX(pointx[i], pointy[i]);
-            ;
             Y = toScreenY(pointx[i], pointy[i]);
             graphics.drawLine(oldX, oldY, X, Y);
             oldX = X;
             oldY = Y;
+        }
+    }
+
+    @Override
+    public void drawPoints(double[] pointx, double[] pointy) {
+        int X, Y;
+        int width=1, height=1;
+        for (int i = 1; i < pointx.length; i++) {
+            X = toScreenX(pointx[i], pointy[i]);
+            Y = toScreenY(pointx[i], pointy[i]);
+            graphics.fillOval(X, Y, width, height);
         }
 
     }

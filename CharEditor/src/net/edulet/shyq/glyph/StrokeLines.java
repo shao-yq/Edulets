@@ -3,15 +3,14 @@ package net.edulet.shyq.glyph;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Vector;
 
 public class StrokeLines extends StrokeBase {
 	public StrokeLines(){
-		this(0, new Vector<Point>());
+		this(0, new PolyLine());
 	}
 
-	public StrokeLines(int code, Vector<Point> points) {
-		super(code, STROKE_LINES, points);
+	public StrokeLines(int code, PointSet pointSet) {
+		super(code, STROKE_LINES, pointSet);
 	}
 
 	public void save(DataOutputStream dos) throws IOException {

@@ -1,6 +1,6 @@
 package net.edulet.shyq.glyph;
 
-public class Point {
+public class Point implements Transformable{
     double x;
     double y;
 
@@ -27,10 +27,22 @@ public class Point {
     public double getY() {
     	return y;
     }
-    
+
     public void move(double dx, double dy) {
-    	x += dx;
-    	y += dy;
+        translate(dx,dy);
     }
-    
+
+    @Override
+    public void translate(double tx, double ty) {
+        x += tx;
+        y += ty;
+    }
+
+    @Override
+    public void scale(double sx, double sy) {
+        x *= sx;
+        y *= sy;
+    }
+
+
 }

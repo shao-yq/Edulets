@@ -77,6 +77,9 @@ public class CharEditorPanel extends EditorPanel{
                 break;
         }
     }
+    public void pickLayout(int t) {
+
+    }
 
     protected void newComponent(){
         newCharacter();

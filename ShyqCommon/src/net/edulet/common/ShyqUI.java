@@ -3,10 +3,7 @@
  */
 package net.edulet.common;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
@@ -596,6 +593,7 @@ public class ShyqUI {
             };
         } else {
             b = new JButton(buttonText);
+            b.setFont(new Font("宋体", Font.PLAIN, 32));
         }
 
         //else

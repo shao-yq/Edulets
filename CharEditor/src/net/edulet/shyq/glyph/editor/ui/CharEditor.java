@@ -483,6 +483,7 @@ public class CharEditor extends JPanel implements MouseMotionListener, MouseList
     }
 
     int currentTool = 0;
+    int currentLayout = 0;
     int toolCount = 0;
 
     class PickToolAction extends AbstractAction {
@@ -498,10 +499,23 @@ public class CharEditor extends JPanel implements MouseMotionListener, MouseList
                     currentTool = i + 1;
                     System.out.println("Tool " + currentTool + " was picked");
                     editorPanel.pickTool(currentTool);
+                    return;
                 }
             }
+
+            for (int i = 0; i < layoutButtons.length; i++) {
+                if (source == layoutButtons[i]) {
+                    currentLayout = i + 1;
+                    System.out.println("Tool " + currentLayout + " was picked");
+                    editorPanel.pickLayout(currentLayout);
+                    return;
+                }
+            }
+
         }
     }
+
+
 
     /**
      * Create an editor to represent the given document.

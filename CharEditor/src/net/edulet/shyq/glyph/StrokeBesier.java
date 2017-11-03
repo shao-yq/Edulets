@@ -8,7 +8,7 @@ public class StrokeBesier extends StrokeBase {
 	Vector ctrlPoints;
 
 	public StrokeBesier(Vector points) {
-		super(0,STROKE_BEZIER, points);
+		super(0,STROKE_BEZIER, new PointSet());
 		ctrlPoints = points;
 		generateCurve();
 	}
@@ -20,7 +20,7 @@ public class StrokeBesier extends StrokeBase {
 		int ww = (int) rect.width;
 		int hh= (int)rect.height;
 		
-		points = new Vector(ww);
+		Vector <Point> points = new Vector(ww);
 		BezierUtil.getBezierPoints(ctrlPoints, ww, points);
 
 	}

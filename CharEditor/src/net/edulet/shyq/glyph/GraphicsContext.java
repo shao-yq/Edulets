@@ -9,6 +9,8 @@ public interface GraphicsContext {
 
 	void drawLines(double[] px, double[] py);
 
+	void drawPoints(double[] px, double[] py);
+
 	public void setScale(double sx, double sy);
 	
 	public void setTranslate(double tx, double ty) ;
